@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Style.css" />
+    <title>Frontpage</title>
+</head>
+
+       
+ <a href="WuwaInfo.html">
+        <div class="icon">
+            <img src="wuwaGameIcon.webp" alt="wuwa-icon" class="Wuwaicon">
+        </div>
+    </a>
+    
+<body>
+    <audio id="myAudio" autoplay muted loop>
+        <source src="audio.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+   
+
+    <!-- Ladataan odotusta -->
+    <div id="loading-spinner" style="display: block;">
+        <img src="loading.gif" alt="Loading...">
+    </div>
+
+    <h1>Search for an Character</h1>
+
+
+   
+
+    <div id="search-bar-container">
+        <input type="text" id="search-bar" placeholder="Search by name..." />
+        <button id="search-button">Search</button>
+        <button id="muteButton" aria-label="Toggle mute">
+            🔊 <!-- You can use an icon font or SVG instead -->
+        </button>
+    </div>
+
+
+    <div id="card-container" class="card-container"></div>
+
+    <div id="popup-modal" class="modal hidden">
+        <div class="modal-content">
+            <span id="close-modal">&times;</span>
+
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="" class="modal-image">
+                <div class="modal-text">
+                    <h3 id="modal-name"></h3>
+                    <p id="modal-element"></p>
+                    <img id="element-image" src="" alt="" class="icon">
+                    <p id="modal-weapon"></p>
+                    <img id="weapon-image" src="" alt="" class="icon">
+                    <p id="modal-rarity"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        const audio = document.getElementById('myAudio');
+
+        muteButton.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            muteButton.textContent = audio.muted ? '🔇' : '🔊';
+
+            // Attempt to play audio if it's paused
+            if (audio.paused) {
+                audio.play().catch(err => {
+                    console.warn("Playback failed:", err);
+                });
+            }
+        });
+
+
+
+        const url = "https://geronimo.okol.org/~sarria/API_Websivu/api.php";
+
+        let item = [];
+        let filteredCharacters = [];
+
+        // Funktio hakemiselle 
+        function searchCharacter() {
+            const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+
+            filteredCharacters = item.filter(char =>
+                char.Name.toLowerCase().includes(searchTerm)
+            );
+
+            document.getElementById("loading-spinner").style.display = "none";
+
+            if (filteredCharacters.length === 0) {
+                document.getElementById("card-container").innerHTML = "<h1>No results found :C</h1>";
+            } else {
+                displayCards(filteredCharacters);
+            }
+        }
+
+        function getDataFromAPI(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    item = data; //tallenetaan data suodatukseen
+                    displayCards(data);
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+        }
+
+        function displayCards(data) {
+            const container = document.getElementById("card-container");
+            container.innerHTML = ""; //Clear existing data
+            document.getElementById("loading-spinner").style.display = "none";
+
+            data.forEach(item => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+
+                card.innerHTML = `
+            <img src="${item.SmallImage}" alt="${item.Name}" class="character-image">
+            <h2>${item.Name}</h2>
+            
+        `;
+
+                card.addEventListener("click", () => showModal(item))
+                container.appendChild(card); // ✅ You need this line to actually display it
+            });
+        }
+
+
+        getDataFromAPI(url);
+        //popup
+        function showModal(item) {
+
+            const modalImage = document.getElementById("modal-image");
+
+            modalImage.classList.add("loading");
+            modalImage.classList.remove("fade-in");
+
+            modalImage.src = item.BigImage; //asetetaan myöhemmin ongelmien välttämiseksi
+            modalImage.alt = item.Name;
+
+            document.getElementById("modal-name").textContent = item.Name;
+            document.getElementById("modal-image").src = item.BigImage;
+            document.getElementById("modal-image").alt = item.Name;
+            document.getElementById("modal-element").textContent = `Element: ${item.Element}`;
+            document.getElementById("element-image").src = item.ElementImage;
+            document.getElementById("modal-weapon").textContent = `Weapon: ${item.Weapon}`;
+            document.getElementById("weapon-image").src = item.WeaponImage;
+            document.getElementById("modal-rarity").textContent = `Rarity: ${getStar(item.Rarity)}`;
+
+            const modalElement = document.querySelector(".modal-content"); // fixed selector
+            modalElement.style.backgroundImage = getBackgroundByElement(item.Element);
+
+
+            function getStar(Rarity) {
+                switch (Rarity.toLowerCase()) {
+                    case "4":
+                        return "⭐⭐⭐⭐";
+                    case "5":
+                        return "⭐⭐⭐⭐⭐";
+                }
+            }
+
+            // Add onload handler before setting src
+            modalImage.src = "loading.gif";
+            modalImage.onload = () => {
+                modalImage.classList.remove("loading");
+                modalImage.classList.add("fade-in");
+                modalImage.src = item.BigImage; // Set actual image after preload
+            };
+            const preload = new Image();
+            preload.onload = modalImage.onload;
+            preload.src = item.BigImage;
+
+
+            document.getElementById("popup-modal").classList.remove("hidden");
+        }
+
+        // Close modal when X is clicked
+        document.getElementById("close-modal").addEventListener("click", () => {
+            document.getElementById("popup-modal").classList.add("hidden");
+        });
+
+        // Optional: close modal when clicking outside the modal content
+        document.getElementById("popup-modal").addEventListener("click", (e) => {
+            if (e.target.id === "popup-modal") {
+                document.getElementById("popup-modal").classList.add("hidden");
+            }
+        });
+
+
+
+        function getBackgroundByElement(element) {
+            switch (element.toLowerCase()) {
+                case "spectro":
+                    return "linear-gradient(180deg, rgba(234, 255, 116, 0.76), rgb(255, 255, 255), rgba(234, 255, 116, 0.76))"; // Yellow
+                case "fusion":
+                    return "linear-gradient(180deg, rgba(255, 61, 61, 0.760), rgb(255, 255, 255), rgba(255, 61, 61, 0.760))"; // Red
+                case "glacio":
+                    return "linear-gradient(180deg, rgba(116, 241, 255, 0.76), rgb(255, 255, 255), rgba(116, 241, 255, 0.76))"; // Blue
+                case "aero":
+                    return "linear-gradient(180deg, rgba(116, 255, 190, 0.76), rgb(255, 255, 255), rgba(116, 255, 190, 0.76))"; // Green
+                case "havoc":
+                    return "linear-gradient(180deg, rgba(117, 0, 76, 0.76), rgb(255, 255, 255), rgba(117, 0, 76, 0.76))"; // Dark Purple
+                case "electro":
+                    return "linear-gradient(180deg, rgba(224, 47, 255, 0.76), rgb(255, 255, 255), rgba(224, 47, 255, 0.76))"; // Purple
+                default:
+                    return "linear-gradient(180deg, rgba(255,255,255,0.3), rgb(255, 255, 255))"; // Default
+            }
+        }
+        function applyModalBackground(modalElement, element) {
+            modalElement.style.backgroundImage = getBackgroundByElement(element);
+        }
+
+        // Haku nappi listener toiminnolla
+        document.getElementById("search-button").addEventListener("click", searchCharacter);
+        document.getElementById("search-bar").addEventListener("input", searchCharacter); //Kirjoittaessa tulee haku
+
+        // Suljetaan listener
+        document.getElementById("close-modal").addEventListener("click", function () {
+            document.getElementById("modal-overlay").style.display = "none";
+            document.getElementById("card-modal").style.display = "none";
+        });
+    </script>
+
+</body>
+
+</html>

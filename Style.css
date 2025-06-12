@@ -1,0 +1,291 @@
+body {
+    background-color: rgb(13, 13, 109);
+    background-image: url("background.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background-image: linear-gradient(180deg, rgba(255, 0, 0, 0), rgb(255, 255, 255));
+    padding: 0px;
+    border-radius: 1px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 20%;
+    transition: transform 0.2s;
+    cursor: pointer;
+
+
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    margin: auto;
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.card:active {
+    transform: scale(0.97);
+    transition: transform 0.1s ease;
+}
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    height: auto;
+    /* wider to fit image + text */
+    width: 50%;
+    /* wider to fit image + text */
+    text-align: left;
+}
+
+.modal-body {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.modal-image {
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.modal-text {
+    flex: 1;
+    background-color: aliceblue;
+    text-align: center;
+    border-radius: 1px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.icon {
+    width: 50px;
+}
+
+#search-bar {
+    padding: 20px 20px;
+    font-size: 18px;
+    border: 2px solid rgb(0, 63, 92);
+    border-radius: 25px;
+    background-color: rgba(30, 30, 30, 0.8);
+    color: rgb(0, 91, 133);
+    outline: none;
+    width: 25%;
+    height: 10%;
+    margin-bottom: 5%;
+    transition: all 0.3s ease-in-out;
+    text-shadow: rgb(0, 63, 92);
+}
+
+#search-bar::placeholder {
+    color: rgb(0, 63, 92);
+    font-style: italic;
+    text-shadow: none;
+}
+
+#search-bar:focus {
+    border-color: rgb(0, 91, 133);
+    box-shadow: rgb(0, 63, 92);
+    background-color: rgba(255, 255, 255, 0.708);
+
+    color: rgb(0, 63, 92);
+    text-shadow: rgb(0, 48, 70);
+}
+
+#search-button {
+    padding: 20px 20px;
+    font-size: 18px;
+    background-color: rgb(0, 91, 133);
+    color: White;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+    text-shadow: rgb(0, 63, 92);
+    margin-bottom: 5%;
+}
+.search-button {
+    padding: 20px 20px;
+    font-size: 18px;
+    background-color: rgb(0, 91, 133);
+    color: White;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+    text-shadow: rgb(0, 63, 92);
+    margin-bottom: 1%;
+    margin-left: 8%;
+}
+.Wuwaicon {
+    width: 100px;
+    padding: 20px 20px;
+}
+
+#search-button:hover {
+    background-color: rgba(255, 255, 255, 0.708);
+    color: rgb(0, 91, 133);
+    box-shadow: rgb(0, 63, 92);
+}
+
+#search-bar-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    color: rgb(0, 91, 133);
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+/* Spinner */
+#loading-spinner {
+    position: fixed;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+/* Fade-in effect */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Image blur while loading */
+.modal-image.loading {
+    filter: blur(5px);
+    opacity: 0.5;
+    transition: filter 0.3s, opacity 0.3s;
+}
+
+#myAudio {
+    display: none;
+    /* Hide audio element */
+}
+
+#muteButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-bottom: 5%;
+}
+
+.InfoBox {
+    background-image: linear-gradient(180deg, rgba(255, 0, 0, 0), rgb(255, 255, 255));
+    padding: 0px;
+    border-radius: 1px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    transition: transform 0.2s;
+    cursor: pointer;
+    Margin-left: 25%;
+    Margin-top: 20%;
+
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+a {
+    color: rgb(0, 91, 133);
+    margin-left: 33%;
+    text-decoration: none;
+    font-size: large;
+}
+
+a:hover {
+    color: rgb(0, 144, 211);
+}
+
+.imageWUWA {
+    margin-left: 10%;
+    height: 50%;
+}
+
+.backbutton {
+    color: rgb(0, 144, 211);
+    background-color: white;
+    height: 10%;
+    width: 10%;
+    padding: 20%, 20%;
+    border-radius: 10%;
+    border-color: rgb(92, 92, 255);
+    font-size: large;
+}
